@@ -97,6 +97,12 @@ TreeNode * newExpNode(ExpKind kind)
   return t;
 }
 
+//TODO : declkind
+
+//TODO : paramkind
+
+//TODO : typekind
+
 /* Function copyString allocates and makes a new
  * copy of an existing string
  */
@@ -136,23 +142,31 @@ void printTree( TreeNode * tree )
   INDENT;
   while (tree != NULL) {
     printSpaces();
+
+/*
+typedef enum {StmtK,ExpK, DeclK, ParamK, TypeK} NodeKind;
+typedef enum {CompK, IfK, IterK, RetK} StmtKind;
+typedef enum {AssignK, OpK,ConstK,IdK, ArrIdK, CallK} ExpKind;
+typedef enum { FuncK, VarK, ArrVarK} DeclKind;
+typedef enum {ArrParamK, NonArrParamK} ParamKind;
+typedef enum {TypeNameK} TypeKind;
+*/
+
+
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
+	case CompK:
+	  fprintf(listing,"Compound Statement\n");
+	  break;
         case IfK:
           fprintf(listing,"If\n");
           break;
-        case RepeatK:
-          fprintf(listing,"Repeat\n");
+        case IterK:
+          fprintf(listing,"Iteration\n");
           break;
-        case AssignK:
-          fprintf(listing,"Assign to: %s\n",tree->attr.name);
-          break;
-        case ReadK:
-          fprintf(listing,"Read: %s\n",tree->attr.name);
-          break;
-        case WriteK:
-          fprintf(listing,"Write\n");
-          break;
+	case RetK:
+	  fprintf(listing,"Return\n");
+	  break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
           break;
@@ -160,6 +174,9 @@ void printTree( TreeNode * tree )
     }
     else if (tree->nodekind==ExpK)
     { switch (tree->kind.exp) {
+        case AssignK:
+          fprintf(listing,"Assign to: %s\n",tree->attr.name);
+          break;
         case OpK:
           fprintf(listing,"Op: ");
           printToken(tree->attr.op,"\0");
@@ -170,11 +187,22 @@ void printTree( TreeNode * tree )
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
           break;
-        default:
+	case ArrIdK:
+	  fprintf(listing,"ArrId: %s\n",tree->attr.name);
+          break;
+	case CallK:
+	  fprintf(listing,"Call: %s\n", tree->attr.name);
+	  break;
+	default:
           fprintf(listing,"Unknown ExpNode kind\n");
           break;
       }
     }
+
+//declkind
+//paramkind
+//typekind
+
     else fprintf(listing,"Unknown node kind\n");
     for (i=0;i<MAXCHILDREN;i++)
          printTree(tree->child[i]);
