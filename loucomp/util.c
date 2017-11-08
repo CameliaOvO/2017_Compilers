@@ -181,6 +181,17 @@ void printTree( TreeNode * tree )
   INDENT;
   while (tree != NULL) {
     printSpaces();
+
+/*
+typedef enum {StmtK,ExpK, DeclK, ParamK, TypeK} NodeKind;
+typedef enum {CompK, IfK, IterK, RetK} StmtKind;
+typedef enum {AssignK, OpK,ConstK,IdK, ArrIdK, CallK} ExpKind;
+typedef enum { FuncK, VarK, ArrVarK} DeclKind;
+typedef enum {ArrParamK, NonArrParamK} ParamKind;
+typedef enum {TypeNameK} TypeKind;
+*/
+
+
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
         case CompK:
@@ -194,7 +205,7 @@ void printTree( TreeNode * tree )
           break;
         case RetK:
           fprintf(listing,"Return\n");
-          break;
+	  break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
           break;
@@ -203,7 +214,7 @@ void printTree( TreeNode * tree )
     else if (tree->nodekind==ExpK)
     { switch (tree->kind.exp) {
         case AssignK:
-          fprintf(listing,"Assign Expression\n");
+          fprintf(listing,"Assign to: %s\n",tree->attr.name);
           break;
         case OpK:
           fprintf(listing,"Op: ");
@@ -215,13 +226,13 @@ void printTree( TreeNode * tree )
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
           break;
-        case ArrIdK:
-          fprintf(listing,"Array Id: \n");
+	case ArrIdK:
+	  fprintf(listing,"ArrId: %s\n",tree->attr.name);
           break;
-        case CallK:
-          fprintf(listing,"Call : %s\n", tree->attr.name);
-          break;
-        default:
+	case CallK:
+	  fprintf(listing,"Call: %s\n", tree->attr.name);
+	  break;
+	default:
           fprintf(listing,"Unknown ExpNode kind\n");
           break;
       }
