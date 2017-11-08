@@ -11,17 +11,16 @@ CC = gcc
 
 CFLAGS = -Wall -g 
 
-OBJS = main.o util.o scan.o parse.o symtab.o analyze.o code.o cgen.o
+OBJS = y.tab.o lex.yy.o main.o util.o symtab.o # analyze.o code.o cgen.o
 
-OBJS_FLEX = main.o util.o scan.o parse.o symtab.o analyze.o code.o cgen.o lex.yy.o 
-
-all: cminus cminus_flex tm
+all: cminus
 
 cminus: $(OBJS)
 	$(CC) $(CFLAGS) -o cminus $(OBJS)
 
-cminus_flex: $(OBJS_FLEX)
-	$(CC) $(CFLAGS) -o cminus_flex main.o util.o lex.yy.o -lfl
+y.tab.o: cminus.y globals.h
+	bison -d cminus.y --yacc
+	$(CC) $(CFLAGS) -c y.tab.c
 
 lex.yy.o: cminus.l scan.h util.h globals.h
 	flex cminus.l
@@ -56,10 +55,7 @@ tm: tm.c
 
 clean:
 	-rm cminus
-	-rm cminus_flex
-	-rm tm
 	-rm $(OBJS)
-	-rm lex.yy.o
 
 test: cminus
 	-./cminus test.cm
