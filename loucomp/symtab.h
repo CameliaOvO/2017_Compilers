@@ -44,8 +44,8 @@ typedef struct ScopeListRec
 	{ char * name;
 	  BucketList bucket[SIZE];
 	  struct ScopeListRec *parent;
-//	  some elements cropped in PPT
-} * ScopeList;
+	  int nestCount;
+} * Scope;
 
 
 
@@ -61,6 +61,13 @@ void st_insert( char * scope, char *name, ExpType type, int lineno, int loc );
  */
 BucketList st_lookup ( char * scope, char * name );
 BucketList st_lookup_excluding_parent ( char * scope, char * name);
+
+
+/* scope stack functions */
+Scope scope_create(char * name);
+void scope_push(Scope scope);
+void scope_pop();
+Scope sc_top();
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 

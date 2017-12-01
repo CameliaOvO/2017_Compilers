@@ -17,6 +17,7 @@
 /* SHIFT is the power of two used as multiplier
    in hash function  */
 #define SHIFT 4
+#define MAX_SCOPE 1000
 
 /* the hash function */
 static int hash ( char * key )
@@ -29,9 +30,40 @@ static int hash ( char * key )
   return temp;
 }
 
+static Scope scopeExist[MAX_SCOPE];
+static Scope scopeStack[MAX_SCOPE];
+static int numScope = 0;
+static int numScopeStack = 0;
 
-/* the hash table */
-static BucketList hashTable[SIZE];
+
+Scope scope_create(char * name)
+{
+	Scope scope;
+	scope = (Scope) malloc(sizeof(struct Scoperec));
+	scope-> name = name;
+	scope-> nestCount = numScopeStack;
+	scope-> parent = scope_top();
+
+	scopeExist[numScope++] = scope;
+	return scope;
+}
+
+
+void scope_push(Scope scope)
+{
+	scopeStack[numScopeStack++] = scope;
+}
+
+void scope_pop()
+{
+	--numScopeStack;
+}
+
+Scope sc_top()
+{
+	return scopeStack[numScopeStack-1];
+}
+
 
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
