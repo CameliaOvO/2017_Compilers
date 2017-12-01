@@ -32,6 +32,7 @@ typedef struct LineListRec
 typedef struct BucketListRec
    { char * name;
      LineList lines;
+     TreeNode *treeNode;
      int memloc ; /* memory location for variable */
      struct BucketListRec * next;
    } * BucketList;
@@ -41,11 +42,12 @@ typedef struct BucketListRec
  * and parent scope.
 */
 typedef struct ScopeListRec
-	{ char * name;
-	  BucketList bucket[SIZE];
-	  struct ScopeListRec *parent;
-	  int nestCount;
-} * Scope;
+   { char * name;
+     BucketList bucket[SIZE];
+     struct ScopeListRec *parent;
+     int nestCount;
+     int scopeLoc;
+   } * Scope;
 
 
 
@@ -54,17 +56,22 @@ typedef struct ScopeListRec
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( Scope scope, char *name, ExpType type, int lineno, int loc );
+void st_insert( char * name, int lineno, int loc, TreeNode * treeNode );
 
-BucketList st_lookup ( Scope scope, char * name );
-BucketList st_lookup_excluding_parent ( Scope scope, char * name);
+/* Function st_lookup returns the memory 
+ * location of a variable or -1 if not found
+ */
+ int st_lookup ( char * name );
 
+int st_add_lineno(char * name, int lineno);
+BucketList st_bucket( char * name );
+int st_exist_top (char * name);
 
 /* scope stack functions */
 Scope scope_create(char * name);
 void scope_push(Scope scope);
 void scope_pop();
-Scope sc_top();
+Scope scope_top();
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 
