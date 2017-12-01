@@ -54,7 +54,7 @@ typedef struct ScopeListRec
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * scope, char *name, ExpType type, int lineno, int loc );
+void st_insert( Scope scope, char *name, ExpType type, int lineno, int loc );
 
 BucketList st_lookup ( Scope scope, char * name );
 BucketList st_lookup_excluding_parent ( Scope scope, char * name);

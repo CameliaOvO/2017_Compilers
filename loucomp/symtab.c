@@ -95,40 +95,24 @@ BucketList st_lookup ( Scope scope, char * name )
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int loc )
+void st_insert(Scope scope, char * name, Exptype type, int lineno, int loc )
 { int h = hash(name);
-  BucketList l =  hashTable[h];
+  Scope top = scope_top();
+  BucketList l =  top->hashTable[h];
   while ((l != NULL) && (strcmp(name,l->name) != 0))
     l = l->next;
   if (l == NULL) /* variable not yet in table */
   { l = (BucketList) malloc(sizeof(struct BucketListRec));
     l->name = name;
+    l->type = type;
     l->lines = (LineList) malloc(sizeof(struct LineListRec));
     l->lines->lineno = lineno;
     l->memloc = loc;
     l->lines->next = NULL;
-    l->next = hashTable[h];
-    hashTable[h] = l; }
-  else /* found in table, so just add line number */
-  { LineList t = l->lines;
-    while (t->next != NULL) t = t->next;
-    t->next = (LineList) malloc(sizeof(struct LineListRec));
-    t->next->lineno = lineno;
-    t->next->next = NULL;
-  }
+    l->next = top->bucket[h];
+    top->bucket[h] = l; }
 } /* st_insert */
 
-/* Function st_lookup returns the memory 
- * location of a variable or -1 if not found
- */
-int st_lookup ( char * name )
-{ int h = hash(name);
-  BucketList l =  hashTable[h];
-  while ((l != NULL) && (strcmp(name,l->name) != 0))
-    l = l->next;
-  if (l == NULL) return -1;
-  else return l->memloc;
-}
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 
