@@ -56,11 +56,8 @@ typedef struct ScopeListRec
  */
 void st_insert( char * scope, char *name, ExpType type, int lineno, int loc );
 
-/* Function st_lookup returns the memory 
- * location of a variable or -1 if not found
- */
-BucketList st_lookup ( char * scope, char * name );
-BucketList st_lookup_excluding_parent ( char * scope, char * name);
+BucketList st_lookup ( Scope scope, char * name );
+BucketList st_lookup_excluding_parent ( Scope scope, char * name);
 
 
 /* scope stack functions */

@@ -64,6 +64,31 @@ Scope sc_top()
 	return scopeStack[numScopeStack-1];
 }
 
+BucketList st_lookup_excluding_parent ( Scope scope, char * name)
+{
+	int h = hash(name);
+	BucketList list = scope->bucket[h];
+	while((l != NULL) && (strcmp(name, list->name)!= 0)){
+		list = list->next;
+	}
+	if(list == NULL) return NULL;
+	else return list;
+}
+BucketList st_lookup ( Scope scope, char * name )
+{
+	Scope s = scope;
+	int h = hash(name);
+	BucketList list = scope->bucket[h];
+	
+	while (s) {
+		list = st_lookup_excluding_parent(s, name);
+		if ( list != NULL ) return list;
+		s = s->parent;
+	}
+	return NULL;
+
+}
+
 
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
