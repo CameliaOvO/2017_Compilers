@@ -56,8 +56,14 @@ void scope_push(Scope scope)
   scopeStack[numScopeStack++] = scope;
 }
 
-void scope_pop()
+void scope_pop(int endLine)
 {
+  Scope s = scope_top();
+  if (endLine != -1) {
+    char * newName = (char*)malloc(sizeof(s->name)+12);
+    sprintf(newName, "%s~%d",s->name, endLine);
+    s -> name = newName;
+  }
   --numScopeStack;
 }
 
@@ -88,7 +94,7 @@ BucketList st_bucket( char * name )
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
+void st_insert( char * name, int lineno, TreeNode * treeNode )
 { int h = hash(name);
   Scope top = scope_top();
   BucketList l =  top->bucket[h];
@@ -127,7 +133,7 @@ int st_exist_top (char * name)
   return FALSE;
 }
 
-int st_add_lineno(char * name, int lineno)
+void st_add_lineno(char * name, int lineno)
 { BucketList l = st_bucket(name);
   LineList ll = l->lines;
   while (ll->next != NULL) ll = ll->next;

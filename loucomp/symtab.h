@@ -56,21 +56,21 @@ typedef struct ScopeListRec
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int loc, TreeNode * treeNode );
+void st_insert( char * name, int lineno, TreeNode * treeNode );
 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
  */
  int st_lookup ( char * name );
 
-int st_add_lineno(char * name, int lineno);
+void st_add_lineno(char * name, int lineno);
 BucketList st_bucket( char * name );
 int st_exist_top (char * name);
 
 /* scope stack functions */
 Scope scope_create(char * name);
 void scope_push(Scope scope);
-void scope_pop();
+void scope_pop(int endLine);
 Scope scope_top();
 
 /* Procedure printSymTab prints a formatted 
