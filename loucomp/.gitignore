@@ -1,3 +1,4 @@
 cminus
 *.o
-tags
+../tags
+*.cm

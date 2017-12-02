@@ -401,23 +401,14 @@ static void checkNode(TreeNode * t)
 
             while (arg != NULL)
             { if (param == NULL)
-              /* the number of arguments does not match to
-                 that of parameters */
                 typeError(arg,"the number of parameters is wrong");
-              /*else if (arg->type == IntegerArray &&
-                  param->type != IntegerArray)
-                typeError(arg,"expected non-array value");
-              else if (arg->type == Integer &&
-                  param->type == IntegerArray)
-                typeError(arg,"expected array value");*/
               else if (arg->type == Void)
                 typeError(arg,"void value cannot be passed as an argument");
-              else {  // no problem!
+              else {  
                 arg = arg->sibling;
                 param = param->sibling;
                 continue;
               }
-              /* any problem */
               break;
             }
 
