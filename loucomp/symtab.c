@@ -148,14 +148,24 @@ void st_add_lineno(char * name, int lineno)
  */
 void printSymTab(FILE * listing)
 { int i, j;
-  fprintf(listing,"Symbol Name    Data Type       Location    Scope      Line Numbers\n");
-  fprintf(listing,"------------- -----------      -------- ------------  ------------\n");
 
   for (i = 0; i < numScope; ++i) {
+
     Scope scope = scopeExist[i];
     BucketList * bucket = scope->bucket;
 
-    char* scopeName = i == 0 ? "global" : scope->name;
+    char* scopeName = i == 0 ? "" : scope->name;
+  fprintf(listing, "Scope name : ~");
+    if(i != 0){
+      fprintf(listing, ":%s", scopeName);
+
+    }
+    fprintf(listing, "\n");
+  fprintf(listing,"----------------------------------------------------\n");
+
+  fprintf(listing,"Variable Name Variable Type  Location   Line Numbers\n");
+  fprintf(listing,"------------- -------------  --------   ------------\n");
+
 
   for (j=0;j<SIZE;++j)
   { if (bucket[j] != NULL)
@@ -164,26 +174,19 @@ void printSymTab(FILE * listing)
 
       while (l != NULL)
       { LineList t = l->lines; 
-        fprintf(listing,"%-14s ",l->name);
-
-
+        fprintf(listing,"%-14s",l->name);
         switch (node->type) {
         case Void:
-          fprintf(listing, "Void              ");
+          fprintf(listing, "Void           ");
           break;
         case Integer:
-          fprintf(listing, "Integer           ");
-          break;
-        case IntegerArray:
-          fprintf(listing, "IntegerArray      ");
+          fprintf(listing, "Integer        ");
           break;
         default:
           break;
         }
 
         fprintf(listing,"%-8d ",l->memloc);
-
-        fprintf(listing,"%-10s ",scopeName);
 
         while (t != NULL)
         { fprintf(listing,"%4d ",t->lineno);
@@ -194,5 +197,6 @@ void printSymTab(FILE * listing)
       }
     }
   }
+    fprintf(listing,"----------------------------------------------------\n\n");  
 }
 } /* printSymTab */
