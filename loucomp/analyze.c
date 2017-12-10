@@ -139,7 +139,7 @@ static void insertNode( TreeNode * t)
         case CallK:
           if (st_lookup(t->attr.name) == -1)
           /* not yet in table, error */
-            symbolError(t, "undelcared symbol");
+            symbolError(t, "undeclared symbol");
           else
           /* already in table, add line number */ 
             st_add_lineno(t->attr.name,t->lineno);
