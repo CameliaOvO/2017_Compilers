@@ -13,7 +13,6 @@
 
 static Scope globalScope = NULL;
 static char * scopeName;
-static int preserveLastScope = FALSE;
 
 /* Procedure traverse is a generic recursive 
  * syntax tree traversal routine:
@@ -48,6 +47,7 @@ static void insertIOFunc(void)
 
   param = newParamNode(NonArrParamK);
   param->attr.name = "arg";
+  param->type = Integer;
   param->child[0] = newTypeNode(FuncK);
   param->child[0]->attr.type = INT;
   
@@ -62,6 +62,12 @@ static void insertIOFunc(void)
   func->child[2] = compStmt;
 
   st_insert("output", 0, func);
+
+  Scope s = scope_create("output");
+  scope_push(s);
+  st_insert("arg", 0, param);
+  scope_pop(-1);
+
 
   func = newDeclNode(FuncK);
   
@@ -105,27 +111,9 @@ static void insertNode( TreeNode * t)
   { case StmtK:
       switch (t->kind.stmt)
       { 
-        case IfK:
-        case IterK:
-        if (preserveLastScope) {
-            preserveLastScope = FALSE;
-          } else {
-            char * newName = (char*)malloc(sizeof(scopeName)+12);
-            sprintf(newName, "%s:%d",scopeName, t->lineno);
-            scopeName = newName;
-            Scope scope = scope_create(scopeName);
-            scope_push(scope);
-          }
-            t->attr.scope = scope_top();
-          break;
-        
         case CompK:
-          if (preserveLastScope) {
-            preserveLastScope = FALSE;
-          } else {
             Scope scope = scope_create(scopeName);
             scope_push(scope);
-          }
           t->attr.scope = scope_top();
           break;
         default:
@@ -158,10 +146,7 @@ static void insertNode( TreeNode * t)
             break;
           }
           st_insert(scopeName,t->lineno,t);
-          char * newName = (char*)malloc(sizeof(scopeName)+12);
-          sprintf(newName, "%s:%d",scopeName, t->lineno);
-          scope_push(scope_create(newName));
-          preserveLastScope = TRUE;
+          scope_push(scope_create(scopeName));
           switch (t->child[0]->attr.type)
           { case INT:
               t->type = Integer;
@@ -221,16 +206,26 @@ static void afterInsertNode( TreeNode * t )
   { case StmtK:
       switch (t->kind.stmt)
       { case CompK:
-        case IfK:
-        case IterK:
-
           scope_pop(t->lineno);
+          break;    
+          default:
+          break;
+      }
+      break;
+        case DeclK:
+      switch (t->kind.decl)
+      { case FuncK:
+          scope_pop(-1);
+            break;
+        case VarK:
+        case ArrVarK:
           break;
         default:
           break;
       }
       break;
-    default:
+
+      default:
       break;
   }
 }
